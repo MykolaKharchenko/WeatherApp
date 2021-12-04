@@ -32,7 +32,7 @@
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="24"/>
         </Style>
-        <Style  x:Key="IsSelectedCityEmpty" TargetType="Path">
+        <Style  x:Key="IsSelectedCityEmpty" TargetType="Grid">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding WindArrowVisibility}" Value="true">
                     <Setter Property="Visibility" Value="Visible"/>
@@ -122,7 +122,7 @@
                 Content="Add city" Background="White"
                 Command="{Binding OpenPopupCommand}"/>
 
-            <Grid Grid.Row="1" Grid.ColumnSpan="2"  Grid.RowSpan="2">
+            <Grid Grid.Row="1" Grid.ColumnSpan="2"  Grid.RowSpan="2" Style="{StaticResource IsSelectedCityEmpty}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="2*"/>
@@ -162,8 +162,13 @@
                         Text="{Binding WindSpeed}"
                         VerticalAlignment="Center"
                         Padding="20"/>
+                
+                <TextBlock Grid.Row="2" Grid.Column="2" 
+                        Text="{Binding WindDeg}"
+                        VerticalAlignment="Center"
+                        Padding="20"/>
 
-                    <Path Grid.Row="2" Grid.Column="2"  
+                    <!--<Path Grid.Row="2" Grid.Column="2"  
                           Style="{StaticResource IsSelectedCityEmpty}"
                           Data="M15,0 L30,40 L15,30 L0,40Z" 
                           Stroke="Black" Fill="Black" 
@@ -177,7 +182,7 @@
                             <TranslateTransform/>
                         </TransformGroup>
                     </Path.RenderTransform>
-                    </Path>         
+                    </Path>-->         
             </Grid>
         </Grid>
 

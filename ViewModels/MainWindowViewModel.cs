@@ -43,6 +43,7 @@ namespace WeatherApp.ViewModels
                 OnPropertyChanged(nameof(FeelsLikeTemp));
                 OnPropertyChanged(nameof(WindArrowVisibility));
                 OnPropertyChanged(nameof(WindSpeed));
+                OnPropertyChanged(nameof(WindDeg));
             }
         }
         public bool WindArrowVisibility
@@ -131,16 +132,8 @@ namespace WeatherApp.ViewModels
                     return "";
             }
         }
-        public string WindSpeed
-        {
-            get
-            {
-                if (CurrentCity != null)
-                    return Math.Round(CurrentCity.Wind.Speed).ToString() + " m/s";
-                else
-                    return "";
-            }
-        }
+        public string WindSpeed => CurrentCity != null ? Math.Round(CurrentCity.Wind.Speed).ToString() + " m/s" : "";
+        public string WindDeg => CurrentCity != null ? ConvertDegToString(CurrentCity.Wind.Deg): "";
 
         private RelayCommand addCityCommand;
         private RelayCommand findCityCommand;
@@ -200,6 +193,11 @@ namespace WeatherApp.ViewModels
 
         private void AddCityCommandExecute()
         {
+            if (SelectedCities.Where(key => key.Id == CurrentCity.Id).Count() == 0)
+            {
+                SelectedCities.Add(CurrentCity);
+            }
+
             OnPropertyChanged(nameof(CitiesNotFilled));
             ClosePopupCommandExecute();
         }
@@ -235,7 +233,15 @@ namespace WeatherApp.ViewModels
         private async void CitiesChangedCommandExecute(object parameter)
         {
             if (parameter is CityWeatherInfo city)
-            CurrentCity = await UpdateCitiesData(city);
+                CurrentCity = await UpdateCitiesData(city);
         }
-    }
+
+        private string ConvertDegToString(double windDeg)
+        {
+            var index = (int)((windDeg % 360) + 22.5) / 45;
+            var values = new string[] { "North", "North-East", "East", "South-East", "South", "South-West", "West", "North-West", "North" };
+
+            return values[index];
+        }
+    }    
 }
