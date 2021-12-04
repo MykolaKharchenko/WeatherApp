@@ -1,17 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using Unity;
+using WeatherApp.Interfaces;
+using WeatherApp.Models;
+using WeatherApp.Services;
+using WeatherApp.ViewModels;
 
 namespace WeatherApp
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        IUnityContainer container = new UnityContainer();
+
+        public App()
+        {
+            container.RegisterType<IWeatherService, OpenWeatherMap>();
+            container.RegisterType<IDataLoader, LocalDataLoader>();
+
+            container.RegisterType<MainWindowModel, MainWindowModel>();
+            container.RegisterType<MainWindowViewModel, MainWindowViewModel>();            
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {          
+            var mainWindowViewModel = container.Resolve<MainWindowViewModel>();
+            var window = new MainWindow { DataContext = mainWindowViewModel };
+
+            MainWindow.Show();
+            base.OnStartup(e);
+        }
     }
 }

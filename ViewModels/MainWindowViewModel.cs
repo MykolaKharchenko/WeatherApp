@@ -11,7 +11,7 @@ namespace WeatherApp.ViewModels
 {
     public class MainWindowViewModel : NotifyPropertyChanged
     {
-        MainWindowModel model;
+        MainWindowModel _model;
 
         ImageSourceConverter converter = new ImageSourceConverter();
         private string searchedData;
@@ -21,7 +21,6 @@ namespace WeatherApp.ViewModels
         private ObservableCollection<CityWeatherInfo> foundedCities;
         private bool citiesNotFilled = true;
         private ImageSource weatherIconSourcePath;
-
         public string SearchedData
         {
             get { return searchedData; }
@@ -151,9 +150,9 @@ namespace WeatherApp.ViewModels
         public RelayCommand RemoveCityCommand => removeCityCommand ??= new RelayCommand(RemoveCityCommandExecute);
         public RelayCommand CitiesChangedCommand => citiesChangedCommand ??= new RelayCommand(CitiesChangedCommandExecute);
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(MainWindowModel model)
         {
-            model = new MainWindowModel();
+            _model = model;
             SelectedCities = new ObservableCollection<CityWeatherInfo>(model.LoadCities());
             FoundedCities = new ObservableCollection<CityWeatherInfo>();
         }
@@ -162,7 +161,7 @@ namespace WeatherApp.ViewModels
         {
             if (city != null)
             {
-                var res = await model.UpdateCityData(city.Id);
+                var res = await _model.UpdateCityData(city.Id);
                 if (SelectedCities.Where(key => key.Id == city.Id).Count() == 0)
                 {
                     SelectedCities.Add(city);
@@ -177,7 +176,7 @@ namespace WeatherApp.ViewModels
         {
             try
             {
-                FoundedCities = new ObservableCollection<CityWeatherInfo>(await model.FindMatchedCities(SearchedData));
+                FoundedCities = new ObservableCollection<CityWeatherInfo>(await _model.FindMatchedCities(SearchedData));
                 if (FoundedCities.Count == 0)
                     MessageBox.Show("No results found");
             }
@@ -221,7 +220,7 @@ namespace WeatherApp.ViewModels
 
         private void ClosingCommandExecute()
         {
-            model.SaveCities(SelectedCities);
+            _model.SaveCities(SelectedCities);
         }
 
         private void RemoveCityCommandExecute()

@@ -8,7 +8,6 @@ namespace WeatherApp
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel();
         }
     }
 }
