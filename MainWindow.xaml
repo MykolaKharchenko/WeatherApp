@@ -1,0 +1,255 @@
+﻿<Window x:Class="WeatherApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WeatherApp" 
+        xmlns:viewmodels="clr-namespace:WeatherApp.ViewModels"
+        xmlns:i ="http://schemas.microsoft.com/xaml/behaviors"        
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="640">    
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Closing">
+                <i:InvokeCommandAction Command="{Binding ClosingCommand}" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+   
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="24"/>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="24"/>
+        </Style>
+        <Style  x:Key="IsSelectedCityEmpty" TargetType="Path">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding WindArrowVisibility}" Value="true">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding WindArrowVisibility}" Value="false">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="0.3*" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+            Visibility="{Binding Path=CitiesNotFilled, Converter={StaticResource VisibilityConverter}}">
+            <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"                
+                BorderBrush="Gray"
+                Padding="20"                
+                Margin="0,0,200,0"
+                Content="Add your first city" 
+            />
+            <Button Grid.Row="0"  Grid.Column="1"                 
+                 BorderBrush="Brown" BorderThickness="5"           
+                 Padding="15,-10,15,0"
+                 Margin="40,36,60,36"
+                 HorizontalAlignment="Right"
+                 FontSize="48"      
+                 Command="{Binding OpenPopupCommand}"
+                 Content="+" Background="White"
+         />
+        </Grid>
+
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="3"
+               Visibility="{Binding Path=CitiesIsFilled, Converter={StaticResource VisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.3*" />
+                <RowDefinition Height="0.3*" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <ComboBox x:Name="Cities" Grid.Row="0" Grid.ColumnSpan="2" 
+                 ItemsSource="{Binding SelectedCities}"                             
+                 FontSize="24" HorizontalContentAlignment="Stretch"
+                 Margin="0,40,200,40" Padding="10,10">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding CitiesChangedCommand}" CommandParameter="{Binding ElementName=Cities,Path=SelectedItem}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="25"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Name}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Sys.Country}"/>
+                            <Button Grid.Column="3" Content="X" 
+                                    Command="{Binding ElementName=Cities, Path=DataContext.RemoveCityCommand}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>                    
+            </ComboBox>
+            
+            <Button Grid.Row="0"  Grid.Column="1"                 
+                BorderBrush="Brown" BorderThickness="5"           
+                Padding="10,00"
+                Margin="0,40,40,40"
+                HorizontalAlignment="Right"
+                Content="Add city" Background="White"
+                Command="{Binding OpenPopupCommand}"/>
+
+            <Grid Grid.Row="1" Grid.ColumnSpan="2"  Grid.RowSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.Background>
+                    <ImageBrush  ImageSource="{Binding WeatherIconSourcePath}" Stretch="Uniform"  >
+                    </ImageBrush>
+                </Grid.Background>
+                
+                <TextBlock x:Name="tempTxBlock" Grid.Row="0" Grid.Column="1"                                            
+                       Text="{Binding Temperature}" 
+                       FontSize="72"
+                       VerticalAlignment="Center"/>
+          
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                       Text="{Binding FeelsLikeTemp}"
+                       VerticalAlignment="Bottom"
+                       Margin="0,0,0,20" Padding="10" />    
+            
+                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                       Content="Description:" Padding="20" Margin="0,0,250,0"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                       Text="{Binding CurrentCity.Weather[0].Description}"
+                       VerticalAlignment="Center" Padding="20"/>
+                
+                <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                       Content="Wind speed:" Padding="20" Margin="0,0,250,0"/>
+                
+                <TextBlock Grid.Row="2" Grid.Column="1" 
+                        Text="{Binding WindSpeed}"
+                        VerticalAlignment="Center"
+                        Padding="20"/>
+
+                    <Path Grid.Row="2" Grid.Column="2"  
+                          Style="{StaticResource IsSelectedCityEmpty}"
+                          Data="M15,0 L30,40 L15,30 L0,40Z" 
+                          Stroke="Black" Fill="Black" 
+                          RenderTransformOrigin="0.5,0.5"
+                          Margin="20" HorizontalAlignment="Center">
+                        <Path.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="{Binding CurrentCity.Wind.Deg}"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                    </Path>         
+            </Grid>
+        </Grid>
+
+        <Popup x:Name="searchPopup" Height="800" Width="640" Placement = "Right"                 
+               Visibility="Visible" IsOpen="{Binding IsPopupOpen}">
+            <Grid Name="PopupGrid" Background="LightSlateGray">
+                <Grid.RowDefinitions>
+                    <RowDefinition />   
+                    <RowDefinition />
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0"  Grid.Column="0"  Grid.ColumnSpan="2"      
+                        FontSize="36"
+                        HorizontalContentAlignment="Center"
+                        Content="Find city" />
+
+                <Button Grid.Row="0"  Grid.Column="1"  
+                        Command="{Binding ClosePopupCommand}"
+                        BorderThickness="0"  Background="Brown"   
+                        Padding="5,-20,5,-10"
+                        VerticalContentAlignment="Center"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        FontSize="40"
+                        Content="x"/>
+
+                <TextBox Grid.Row="1" Grid.Column="0"
+                         Text="{Binding SearchedData}"                           
+                         Margin="20,20,-150,20"/>
+
+                <Button Grid.Row="1" Grid.Column="1"
+                        Content="Search" FontSize="24"
+                        Margin="150,20,20,20"
+                         HorizontalContentAlignment="Center"
+                        Command="{Binding FindCityCommand}"/>
+
+                <ListBox Grid.Row="2" Grid.ColumnSpan="2"                   
+                         ItemsSource="{Binding FoundedCities}"    
+                         SelectedItem="{Binding CurrentCity}"
+                         FontSize="24"
+                         Padding="20" Margin="20,0" >
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Text="{Binding Name}" Margin="0,0,20,0"/>
+                                <TextBlock Text="{Binding Sys.Country}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+
+                <Button Grid.Row="3" Grid.Column="0"
+                        Content="Add" Margin="10"
+                        HorizontalContentAlignment="Center"
+                        Command="{Binding AddCityCommand}"
+                    />
+
+                <Button Grid.Row="3" Grid.Column="1"
+                        Content="Cancel" Margin="10"
+                        HorizontalContentAlignment="Center"
+                        Command="{Binding ClosePopupCommand}"
+                    />
+
+            </Grid>
+        </Popup>
+
+    </Grid>
+</Window>
