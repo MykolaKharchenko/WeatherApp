@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
 using WeatherApp.DataModels;
 using WeatherApp.Interfaces;
 
@@ -10,7 +9,7 @@ namespace WeatherApp.Services
 {
     public class LocalDataLoader : IDataLoader
     {
-        public string pathToFile = "CitiesDb.json";
+        private string pathToFile = "CitiesDb.json";
 
         public IEnumerable<CityWeatherInfo> Load()
         {

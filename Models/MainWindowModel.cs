@@ -17,7 +17,7 @@ namespace WeatherApp.Models
             loadDataService = new LocalDataLoader();
             weatherService = new OpenWeatherMap();
         }
-        public async Task<List<CityWeatherInfo>> FindMatchedCities(string inputedValue)
+        public async Task<IEnumerable<CityWeatherInfo>> FindMatchedCities(string inputedValue)
         {
             return await weatherService.GetMatchedCitiesAsync(inputedValue);
         }
@@ -29,7 +29,7 @@ namespace WeatherApp.Models
 
         public IEnumerable<CityWeatherInfo> LoadCities()
         {
-            return loadDataService.Load();         
+            return loadDataService.Load();
         }
 
         public void SaveCities(IEnumerable<CityWeatherInfo> _cities)

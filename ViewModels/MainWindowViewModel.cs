@@ -232,9 +232,10 @@ namespace WeatherApp.ViewModels
                 SelectedCities.Remove(SelectedCities.Where(key => key.Id == CurrentCity.Id).SingleOrDefault());
         }
 
-        private async void CitiesChangedCommandExecute(object city)
+        private async void CitiesChangedCommandExecute(object parameter)
         {
-            CurrentCity = await UpdateCitiesData((CityWeatherInfo)city);
+            if (parameter is CityWeatherInfo city)
+            CurrentCity = await UpdateCitiesData(city);
         }
     }
 }

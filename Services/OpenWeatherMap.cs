@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using WeatherApp.DataModels;
@@ -25,7 +23,7 @@ namespace WeatherApp.Services
             return city;
         }
 
-        public async Task<List<CityWeatherInfo>> GetMatchedCitiesAsync(string searchedData)
+        public async Task<IEnumerable<CityWeatherInfo>> GetMatchedCitiesAsync(string searchedData)
         {
             Uri apiUri = new Uri($"{baseUri}find?q={searchedData}&cnt=50&type=like&units=metric{appId}");
             var responseBody = await client.GetStringAsync(apiUri);
@@ -35,41 +33,5 @@ namespace WeatherApp.Services
 
             return dataCol.List;
         }
-
-        //public CityWeatherInfo GetCityById(string searchedData) 
-        //{
-        //    var city = new CityWeatherInfo();
-        //    WebRequest request = WebRequest.Create($"{baseUri}weather?id={searchedData}&units=metric{appId}");
-        //    WebResponse response = request.GetResponse();
-
-        //    using (Stream stream = response.GetResponseStream())
-        //    {
-        //        using (StreamReader reader = new StreamReader(stream))
-        //        {
-        //            string jsonData = reader.ReadToEnd();
-        //            city = JsonConvert.DeserializeObject<CityWeatherInfo>(jsonData);
-        //        }
-        //    }
-        //    response.Close();
-        //    return city;
-        //}
-
-        //public List<CityWeatherInfo> GetMatchedCities(string searchedData)
-        //{
-        //    WeatherDataCollection dataCol;
-        //    WebRequest request = WebRequest.Create($"{baseUri}find?q={searchedData}&cnt=50&type=like&units=metric{appId}");
-        //    WebResponse response = request.GetResponse();
-
-        //    using (Stream stream = response.GetResponseStream())
-        //    {
-        //        using (StreamReader reader = new StreamReader(stream))
-        //        {
-        //            string jsonData = reader.ReadToEnd();
-        //            dataCol = JsonConvert.DeserializeObject<WeatherDataCollection>(jsonData);
-        //        }
-        //    }
-        //    response.Close();
-        //    return dataCol.List;
-        //}
     }
 }
